@@ -7,7 +7,7 @@ class QuantumCheeseball:
         self.anchor = anchor or random.randint(0, 999999)
         self.gen = Generator(self.anchor)
         self.p_noise = PerlinNoise1D(self.anchor)
-        self.noise2d = PerlinNoise2D(seed=42)
+        self.noise2d = PerlinNoise2D(self.anchor)
     def run(self):
         self.gen.view_grid()
         for sample_index in range(20):
