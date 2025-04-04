@@ -8,8 +8,8 @@ class Generator:
         self.width = width
         self.height = height
         random.seed(self.anchor)
-        self.grid: List[List[int]] = [[random.randint(0, 1) for _ in range(width)] for _ in range(height)]
+        self.bin_grid: List[List[int]] = [[random.randint(0, 1) for _ in range(width)] for _ in range(height)]
 
     def view_grid(self):
-        for row in self.grid:
+        for row in self.bin_grid:
             print(''.join(str(tile) for tile in row))
