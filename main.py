@@ -1,6 +1,8 @@
 from map_randomizers.generator import Generator
 from map_randomizers.perlinnoise1d import PerlinNoise1D
 from map_randomizers.perlinnoise2d import PerlinNoise2D
+from map_randomizers.cellularautomata import CellularAutomata
+from map_randomizers.drunkardwalk import DrunkardsWalk
 import random
 class QuantumCheeseball:
     def __init__(self, anchor=None):
@@ -8,12 +10,16 @@ class QuantumCheeseball:
         self.gen = Generator(self.anchor)
         self.p_noise = PerlinNoise1D(self.anchor)
         self.noise2d = PerlinNoise2D(self.anchor)
+        self.c_automata = CellularAutomata(60, 30, wall_chance=0.65, seed=self.anchor)
+        self.d_walk = DrunkardsWalk(60, 30)
     def run(self):
         self.gen.view_grid()
+        print()
         for sample_index in range(20):
             x = sample_index * 0.1
             value = self.p_noise.noise(x)
             print(f"x = {x:.2f}, noise = {value:.3f}")
+        print()
         width = 60
         height = 30
         scale = 0.1
@@ -31,6 +37,12 @@ class QuantumCheeseball:
                 else:
                     row += "^"
             print(row)
+        print()
+        self.c_automata.simulate(steps=5)
+        self.c_automata.display()
+        print()
+        self.d_walk.walk(steps=300)
+        self.d_walk.display()
 if __name__ == "__main__":
     qc = QuantumCheeseball()
     qc.run()
