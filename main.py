@@ -19,7 +19,6 @@ class QuantumCheeseball:
         self.c_automata = CellularAutomata(self.width, self.height, wall_chance=0.65, seed=self.anchor)
         self.d_walk = DrunkardsWalk(self.width, self.height)
 
-
     def view_generator(self):
         self.gen.view_grid()
 
@@ -30,12 +29,10 @@ class QuantumCheeseball:
             print(f"x = {x:.2f}, noise = {value:.3f}")
 
     def view_perlin_2d(self):
-        width = 60
-        height = 30
         scale = 0.1
-        for y in range(height):
+        for y in range(self.height):
             row = ""
-            for x in range(width):
+            for x in range(self.width):
                 noise_value = self.noise2d.noise(x * scale, y * scale)
                 if noise_value < -0.3:
                     row += "~"
@@ -69,11 +66,14 @@ class QuantumCheeseball:
 
         while True:
             user_input = input("Enter command: ").strip()
-
+            print(user_input)
             if not user_input:
                 continue
-
+            if user_input == "0":
+                print("Goodbye!")
+                break
             parts = user_input.split(":")
+
             if len(parts) != 4:
                 print("Invalid format. Please use a:x:y:s")
                 continue
@@ -84,15 +84,14 @@ class QuantumCheeseball:
                 print("Invalid input. All fields must be integers.")
                 continue
 
-            if a == 0:
-                print("Goodbye!")
-                break
-
-            # Update seed if needed
-            if s != self.anchor:
+            # Update width, height, and seed
+            if (x != self.width) or (y != self.height) or (s != self.anchor):
+                self.width = x
+                self.height = y
                 self.anchor = s
                 self.reset_modules()
                 print(f"Seed updated to {self.anchor}")
+                print(f"Map size updated to {self.width}x{self.height}")
 
             if a == 1:
                 self.view_generator()
