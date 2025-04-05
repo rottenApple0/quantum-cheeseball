@@ -2,12 +2,22 @@ import math
 import random
 
 class PerlinNoise2D:
-    def __init__(self, seed=None):
+    def __init__(self, width, height, scale=0.1, seed=None):
+        """
+        width: number of horizontal points
+        height: number of vertical points
+        scale: how zoomed in/out the noise should be
+        seed: random seed for reproducibility
+        """
+        self.width = width
+        self.height = height
+        self.scale = scale
+        
         if seed is not None:
             random.seed(seed)
         self.permutation_table = list(range(256))
         random.shuffle(self.permutation_table)
-        self.permutation_table += self.permutation_table  # repeat it to avoid overflow
+        self.permutation_table += self.permutation_table  # repeat to avoid overflow
 
     def fade(self, t):
         """Smooth curve function for interpolation."""
@@ -30,7 +40,11 @@ class PerlinNoise2D:
             return -x_offset - y_offset
 
     def noise(self, x_position, y_position):
-        """Get Perlin noise at coordinate (x_position, y_position)."""
+        """Get Perlin noise value at a specific (x, y) world position."""
+        # Scale coordinates
+        x_position *= self.scale
+        y_position *= self.scale
+
         # Find unit grid cell containing point
         x0 = math.floor(x_position)
         y0 = math.floor(y_position)
@@ -63,6 +77,17 @@ class PerlinNoise2D:
         final_value = self.lerp(lerp_x1, lerp_x2, v)
 
         return final_value
+
+    def generate_map(self):
+        """Generate a full 2D array of noise values."""
+        noise_map = []
+        for y in range(self.height):
+            row = []
+            for x in range(self.width):
+                value = self.noise(x, y)
+                row.append(value)
+            noise_map.append(row)
+        return noise_map
 
     def __call__(self, x_position, y_position):
         return self.noise(x_position, y_position)

@@ -6,13 +6,19 @@ from map_randomizers.drunkardwalk import DrunkardsWalk
 import random
 
 class QuantumCheeseball:
-    def __init__(self, anchor=None):
+    def __init__(self, anchor=None, width=60, height=30):
         self.anchor = anchor or random.randint(0, 999999)
-        self.gen = Generator(self.anchor)
-        self.p_noise = PerlinNoise1D(self.anchor)
-        self.noise2d = PerlinNoise2D(self.anchor)
-        self.c_automata = CellularAutomata(60, 30, wall_chance=0.65, seed=self.anchor)
-        self.d_walk = DrunkardsWalk(60, 30)
+        self.width = width
+        self.height = height
+        self.reset_modules()
+
+    def reset_modules(self):
+        self.gen = Generator(self.anchor, width=self.width, height=self.height)
+        self.p_noise = PerlinNoise1D(width=self.width, seed=self.anchor)
+        self.noise2d = PerlinNoise2D(width=self.width, height=self.height, seed=self.anchor)
+        self.c_automata = CellularAutomata(self.width, self.height, wall_chance=0.65, seed=self.anchor)
+        self.d_walk = DrunkardsWalk(self.width, self.height)
+
 
     def view_generator(self):
         self.gen.view_grid()
@@ -50,33 +56,56 @@ class QuantumCheeseball:
         self.d_walk.display()
 
     def run(self):
+        print("=== QuantumCheeseball CLI ===")
+        print(f"Current Seed: {self.anchor}")
+        print("Format: a:x:y:s  (Algorithm:X:Y:Seed)")
+        print("Algorithms:")
+        print(" 1 - View Generator Grid")
+        print(" 2 - View Perlin Noise 1D Samples")
+        print(" 3 - View Perlin Noise 2D Map")
+        print(" 4 - Run Cellular Automata")
+        print(" 5 - Run Drunkard's Walk")
+        print(" 0 - Quit")
+
         while True:
-            print("\n=== QuantumCheeseball CLI ===")
-            print(f"Seed: {self.anchor}")
-            print("1. View Generator grid")
-            print("2. View Perlin Noise 1D samples")
-            print("3. View Perlin Noise 2D map")
-            print("4. Run Cellular Automata simulation")
-            print("5. Run Drunkard's Walk")
-            print("6. Quit")
+            user_input = input("Enter command: ").strip()
 
-            choice = input("Choose an option (1-6): ").strip()
+            if not user_input:
+                continue
 
-            if choice == "1":
-                self.view_generator()
-            elif choice == "2":
-                self.view_perlin_1d()
-            elif choice == "3":
-                self.view_perlin_2d()
-            elif choice == "4":
-                self.run_cellular_automata()
-            elif choice == "5":
-                self.run_drunkards_walk()
-            elif choice == "6":
+            parts = user_input.split(":")
+            if len(parts) != 4:
+                print("Invalid format. Please use a:x:y:s")
+                continue
+
+            try:
+                a, x, y, s = map(int, parts)
+            except ValueError:
+                print("Invalid input. All fields must be integers.")
+                continue
+
+            if a == 0:
                 print("Goodbye!")
                 break
+
+            # Update seed if needed
+            if s != self.anchor:
+                self.anchor = s
+                self.reset_modules()
+                print(f"Seed updated to {self.anchor}")
+
+            if a == 1:
+                self.view_generator()
+            elif a == 2:
+                self.view_perlin_1d()
+            elif a == 3:
+                self.view_perlin_2d()
+            elif a == 4:
+                self.run_cellular_automata()
+            elif a == 5:
+                self.run_drunkards_walk()
             else:
-                print("Invalid choice. Please enter a number between 1 and 6.")
+                print("Unknown algorithm number.")
 
 if __name__ == "__main__":
     qc = QuantumCheeseball()
