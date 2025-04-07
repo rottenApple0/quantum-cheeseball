@@ -55,7 +55,7 @@ class QuantumCheeseball:
     def run(self):
         print("=== QuantumCheeseball CLI ===")
         print(f"Current Seed: {self.anchor}")
-        print("Format: a:x:y:s  (Algorithm:X:Y:Seed)")
+        print("Format: a:x:y:s  (Algorithm:width:height:Seed)")
         print("Algorithms:")
         print(" 1 - View Generator Grid")
         print(" 2 - View Perlin Noise 1D Samples")
